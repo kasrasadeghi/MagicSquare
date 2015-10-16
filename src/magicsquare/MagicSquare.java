@@ -20,7 +20,7 @@ public class MagicSquare {
         // 4 9 2
         // 3 5 7
         // 8 1 6
-        int [][] sq1 = { };
+        int [][] sq1 = { {4,9,2},{3,5,7},{8,1,6}};
         
         printSquareWithSums( sq1 );
         System.out.println( "Is magic? " + isMagic( sq1 ) );
@@ -32,7 +32,11 @@ public class MagicSquare {
         // 4	6	13	20	22	
         // 10	12	19	21	3	
         // 11	18	25	2	9
-        int [][] sq2 = {  };
+        int [][] sq2 = { {17,24,1,8,15},
+            {23,5,7,14,16},
+            {4,6,13,20,22},
+            {10,12,19,21,3},
+            {11,18,25,2,9}};
         
         printSquareWithSums( sq2 );
         System.out.println( "Is magic? " + isMagic( sq2 ) );
@@ -42,7 +46,7 @@ public class MagicSquare {
         // 3	5	7	
         // 8	1	6	
         // 4	9	2
-        int [][] sq3 = { };
+        int [][] sq3 = { {3,5,7},{8,1,6},{4,9,2}};
         
         printSquareWithSums( sq3 );
         System.out.println( "Is magic? " + isMagic( sq3 ) );
@@ -71,7 +75,10 @@ public class MagicSquare {
     // rowSum( sq, r ) ==> 15
     public static int rowSum( int [][] sq, int r )
     {
-        return 0;
+        int output = 0;
+        for (int i = 0; i < sq[r].length; i++) 
+            output += sq[r][i];
+        return output;
     }
     
     // colSum
@@ -90,7 +97,10 @@ public class MagicSquare {
     // colSum( sq, c ) ==> 15
     public static int colSum( int [][] sq, int c )
     {
-        return 0;
+        int output = 0;
+        for (int i = 0; i < sq.length; i++) 
+            output += sq[i][c];
+        return output;
     }
     
     // mainDiagonalSum
@@ -107,10 +117,14 @@ public class MagicSquare {
     // mainDiagonalSum( sq ) ==> 15
     public static int mainDiagonalSum( int [][] sq )
     {
-        return 0;
+        int output = 0;
+        for (int i = 0; i < sq.length; i++) {
+            output += sq[i][i];
+        }
+        return output;
     }
     
-    // offDiagonalSum
+    // antiDiagonalSum
     // computes the sum of the entries on the off diagonal (top right to bottom left) of a square matrix
     // inputs:
     // sq - the square matrix
@@ -121,10 +135,14 @@ public class MagicSquare {
     // 1 2 3
     // 4 5 6
     // 7 8 9
-    // offDiagonalSum( sq ) ==> 15
-    public static int offDiagonalSum( int [][] sq )
+    // antiDiagonalSum( sq ) ==> 15
+    public static int antiDiagonalSum( int [][] sq )
     {
-        return 0;
+        int output = 0;
+        for (int i = 0; i < sq.length; i++) {
+            output += sq[sq.length - i - 1][i];
+        }
+        return output;
     }
     
     // printSquareWithSums
@@ -143,7 +161,22 @@ public class MagicSquare {
     // Hint: use tabs (\t) between entries to get everything to line up nicely
     public static void printSquareWithSums( int [][] sq )
     {
+        if (sq.length == 0) return;
+        for (int i = 0; i < sq.length; i++)
+            System.out.print("\t");
+        System.out.println("=" + antiDiagonalSum(sq));
         
+        for (int i = 0; i < sq.length; i++) {
+            for (int j = 0; j < sq[0].length; j++) {
+                System.out.print(sq[i][j] + "\t");
+            }
+            System.out.println("=" + rowSum(sq, i));
+        }
+        
+        for (int i = 0; i < sq.length; i++) 
+            System.out.print("=" +colSum(sq, i) + "\t");
+        
+        System.out.println("=" + mainDiagonalSum(sq));
     }
     
     // isMagic
@@ -155,7 +188,22 @@ public class MagicSquare {
     // true if sq is magic, false otherwise
     public static boolean isMagic( int [][] sq )
     {
-        return false;
+        int checker = antiDiagonalSum(sq);
+        
+        if ( mainDiagonalSum(sq) != checker)
+            return false;
+        
+        //check rows
+        for (int i = 0; i < sq.length; i++)
+            if (rowSum(sq, i) != checker)
+                return false;
+        
+        //check columns
+        for (int i = 0; i < sq.length; i++)
+            if (colSum(sq, i) != checker)
+                return false;
+        
+        return true;
     }
     
     // generateOddMagicSquare
@@ -186,8 +234,29 @@ public class MagicSquare {
     // an n x n array containing the numbers 1..n^2 arranged so that the array forms a magic square
     public static int [][] generateOddMagicSquare( int n )
     {
-        int [][] scarlet = new int[0][0];
-        return scarlet;
+        if (n%2 == 0) {
+            System.out.println("n must be odd.");
+            System.exit(0);
+        }
+        int [][] square = new int[n][n];
+        
+        int counter = 0;
+        int r = n-1;
+        int c = n/2;
+        
+        while(counter < n * n) {
+            square[r][c] = ++counter;
+            
+            if (counter%n != 0){
+                r++; r%=n;
+                c++; c%=n;
+            } else {
+                r--; r%=n;
+            }
+        }
+        
+        
+        return square;
     }
     
 }
